@@ -42,10 +42,10 @@ public class ImageResizerServiceImpl implements ImageResizerService {
     }
 
     @Override
-    public void resizeImage(String path) {
+    public String resizeImage(String path) {
         if (invalidImageFilePath(path)) {
-            System.out.println("Error invalid file path or file format.");
-            return;
+            System.out.println("Error invalid file path or file format. Path = "+path);
+            return "";
         }
 
         Path pathImage = Paths.get(path);
@@ -58,19 +58,20 @@ public class ImageResizerServiceImpl implements ImageResizerService {
                     new ImageScalingLimits(_maxImageSize, _maxImageSize));
             
             BufferedImage scaledImage = scaler.getScaledImage();
-            saveScaledImageToFile(path, pathImage, scaledImage);
+            return saveScaledImageToFile(path, pathImage, scaledImage);
             
         } catch (IOException e) {
             System.out.println("Error resizing image " + pathImage.getFileName());
             e.printStackTrace();
-            return;
+            return "";
         }
     }
 
-    private void saveScaledImageToFile(String path, Path pathImage, BufferedImage scaledImage) throws IOException {
+    private String saveScaledImageToFile(String path, Path pathImage, BufferedImage scaledImage) throws IOException {
         String format = path.substring(path.lastIndexOf(".") + 1);
         String newName = pathImage.getFileName().toString().replace("." + format, "_thumb." + format);
         ImageIO.write(scaledImage, format, Paths.get(newName).toFile());
+        return Paths.get(newName).toAbsolutePath().toString();
     }
 
     private boolean invalidImageFilePath(String path) {
@@ -83,9 +84,10 @@ public class ImageResizerServiceImpl implements ImageResizerService {
     }
 
     @Override
-    public void resizeVideo(String path) {
+    public String resizeVideo(String path) {
         // Intentionally left empty for future work
         System.out.println("Resize video functionality not yet implemented");
+        return path;
     }
 
 }
