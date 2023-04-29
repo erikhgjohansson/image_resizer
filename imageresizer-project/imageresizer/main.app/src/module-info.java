@@ -1,5 +1,6 @@
 module main.app {
-    requires imageresizer.api;
-    requires imageresizer.impl;
-    uses api.services.ImageResizerService;
+//    requires imageresizer.api;
+//    requires imageresizer.impl;
+    requires imageresizer.mmi;
+//    uses api.services.ImageResizerService;
 }
