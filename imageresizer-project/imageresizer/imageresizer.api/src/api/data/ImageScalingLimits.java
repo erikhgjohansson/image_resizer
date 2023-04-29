@@ -10,11 +10,11 @@ public class ImageScalingLimits {
         _maxHeight = maxHeight;
     }
 
-    public int get_maxWidth() {
+    public int getMaxWidth() {
         return _maxWidth;
     }
 
-    public int get_maxHeight() {
+    public int getMaxHeight() {
         return _maxHeight;
     }
 
