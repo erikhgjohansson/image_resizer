@@ -22,7 +22,7 @@ import api.data.ResizingMethod;
 import api.services.ImageResizerService;
 
 public class ImageResizerServiceImpl implements ImageResizerService {
-    
+
     private static final Logger LOGGER = Logger.getLogger(ImageResizerServiceImpl.class.getName());
 
     private final Set<String> _allowedFileFormats;
@@ -34,12 +34,12 @@ public class ImageResizerServiceImpl implements ImageResizerService {
 
     private void initializeLogger() {
         try {
-        String logName = ImageResizerServiceImpl.class.getName()+".log";
-        FileHandler fileHandler = new FileHandler(Paths.get(logName).toAbsolutePath().toString(), true);
-        fileHandler.setLevel(Level.ALL);
-        LOGGER.addHandler(fileHandler);
-        SimpleFormatter formatter = new SimpleFormatter();
-        fileHandler.setFormatter(formatter);
+            String logName = ImageResizerServiceImpl.class.getName() + ".log";
+            FileHandler fileHandler = new FileHandler(Paths.get(logName).toAbsolutePath().toString(), true);
+            fileHandler.setLevel(Level.ALL);
+            LOGGER.addHandler(fileHandler);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fileHandler.setFormatter(formatter);
         } catch (SecurityException | IOException e) {
             e.printStackTrace();
         }
@@ -56,9 +56,9 @@ public class ImageResizerServiceImpl implements ImageResizerService {
 
     @Override
     public String resizeImage(String path, ImageResizingLimits limits, ResizingMethod method) {
-        LOGGER.log(Level.INFO, "Resizing image found at "+path);
+        LOGGER.log(Level.INFO, "Resizing image found at " + path);
         if (invalidImageFilePath(path)) {
-            String errorMessage = "Error invalid file path or file format. Path = "+path;
+            String errorMessage = "Error invalid file path or file format. Path = " + path;
             LOGGER.log(Level.WARNING, errorMessage);
             return errorMessage;
         }
@@ -66,15 +66,14 @@ public class ImageResizerServiceImpl implements ImageResizerService {
         Path pathImage = Paths.get(path);
         try {
             BufferedImage unresizedImage = ImageIO.read(pathImage.toAbsolutePath().toFile());
-            LOGGER.log(Level.INFO, "Unaltered image has [pixels] height:" + unresizedImage.getHeight() + ", width "+unresizedImage.getWidth());
-            ImageResizer resizer = new ImageResizer(
-                    unresizedImage, 
-                    method, 
-                    limits);
+            LOGGER.log(Level.INFO, "Unaltered image has [pixels] height:" + unresizedImage.getHeight() + ", width "
+                    + unresizedImage.getWidth());
+            ImageResizer resizer = new ImageResizer(unresizedImage, method, limits);
             BufferedImage resizedImage = resizer.getResizedImage();
-            LOGGER.log(Level.INFO, "Resized image has [pixels] height:" + unresizedImage.getHeight() + ", width "+unresizedImage.getWidth());
+            LOGGER.log(Level.INFO, "Resized image has [pixels] height:" + unresizedImage.getHeight() + ", width "
+                    + unresizedImage.getWidth());
             return saveResizedImageToFile(path, pathImage, resizedImage);
-            
+
         } catch (IOException e) {
             String errorMessage = "Error resizing image " + pathImage.getFileName();
             LOGGER.log(Level.WARNING, errorMessage + e);
@@ -87,8 +86,9 @@ public class ImageResizerServiceImpl implements ImageResizerService {
         String newName = pathImage.getFileName().toString().replace("." + format, "_thumb." + format);
         boolean isWrittenToFile = ImageIO.write(resizedImage, format, Paths.get(newName).toFile());
         String resizedImagePath = Paths.get(newName).toAbsolutePath().toString();
-        String saveFileMessage = isWrittenToFile ? "SUCCESSFULLY saved resized image to " : "FAILED to save resized image to ";
-        LOGGER.info(saveFileMessage+resizedImagePath);
+        String saveFileMessage = isWrittenToFile ? "SUCCESSFULLY saved resized image to "
+                : "FAILED to save resized image to ";
+        LOGGER.info(saveFileMessage + resizedImagePath);
         return resizedImagePath;
     }
 
