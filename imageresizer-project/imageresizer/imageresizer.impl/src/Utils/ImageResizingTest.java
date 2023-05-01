@@ -3,6 +3,7 @@
 //import java.awt.image.BufferedImage;
 //
 //import org.junit.Assert;
+//import org.junit.Ignore;
 //import org.junit.Test;
 //
 //import api.data.ImageResizingLimits;
@@ -14,11 +15,11 @@
 //    public void testScaleImageUp() {
 //
 //        BufferedImage imageToScale = generateTestImageEqualWidthAndHeight();
-//        ResizingMethod a = ResizingMethod.SCALE;
+//        ResizingMethod method = ResizingMethod.SCALE;
 //        int wantedMaxWidth = 10;
 //        int wantedMaxHeight = 10;
-//        ImageResizingLimits b = new ImageResizingLimits(wantedMaxWidth, wantedMaxHeight);
-//        ImageResizer imageScaler = new ImageResizer(imageToScale, a, b);
+//        ImageResizingLimits limits = new ImageResizingLimits(wantedMaxWidth, wantedMaxHeight);
+//        ImageResizer imageScaler = new ImageResizer(imageToScale, method, limits);
 //        BufferedImage scaledImage = imageScaler.getResizedImage();        
 //
 //        Assert.assertTrue(scaledImage.getWidth() == wantedMaxWidth);
@@ -29,11 +30,11 @@
 //    public void testScaleImageDown() {
 //
 //        BufferedImage imageToScale = generateTestImageEqualWidthAndHeight();
-//        ResizingMethod a = ResizingMethod.SCALE;
+//        ResizingMethod method = ResizingMethod.SCALE;
 //        int wantedMaxWidth = 5;
 //        int wantedMaxHeight = 5;
-//        ImageResizingLimits b = new ImageResizingLimits(wantedMaxWidth, wantedMaxHeight);
-//        ImageResizer imageScaler = new ImageResizer(imageToScale, a, b);
+//        ImageResizingLimits limits = new ImageResizingLimits(wantedMaxWidth, wantedMaxHeight);
+//        ImageResizer imageScaler = new ImageResizer(imageToScale, method, limits);
 //        BufferedImage scaledImage = imageScaler.getResizedImage();        
 //
 //        Assert.assertTrue(scaledImage.getWidth() == wantedMaxWidth);
@@ -44,20 +45,32 @@
 //    public void testCropImage() {
 //
 //        BufferedImage imageToScale = generateTestImageGreaterHeight();
-//        ResizingMethod a = ResizingMethod.CROP;
+//        ResizingMethod method = ResizingMethod.CROP;
 //        int wantedMaxWidth = 5;
 //        int wantedMaxHeight = 10;
-//        ImageResizingLimits b = new ImageResizingLimits(wantedMaxWidth, wantedMaxHeight);
-//        ImageResizer imageScaler = new ImageResizer(imageToScale, a, b);
+//        ImageResizingLimits limits = new ImageResizingLimits(wantedMaxWidth, wantedMaxHeight);
+//        ImageResizer imageScaler = new ImageResizer(imageToScale, method, limits);
 //        BufferedImage scaledImage = imageScaler.getResizedImage();        
-//
-//        System.out.println(imageToScale.toString());
-//        System.out.println(scaledImage.toString());
 //
 //        Assert.assertTrue(scaledImage.getWidth() == wantedMaxWidth);
 //        Assert.assertTrue(scaledImage.getHeight() == wantedMaxHeight);
 //    }
+//    
+//    @Test
+//    public void testScaleAndCropImage() {
 //
+//        System.out.println("testScaleAndCropImage");
+//        BufferedImage imageToScale = generateTestImageGreaterHeight();
+//        ResizingMethod method = ResizingMethod.SCALE_AND_CROP;
+//        int wantedMaxWidth = 5;
+//        int wantedMaxHeight = 10;
+//        ImageResizingLimits limits = new ImageResizingLimits(wantedMaxWidth, wantedMaxHeight);
+//        ImageResizer imageScaler = new ImageResizer(imageToScale, method, limits);
+//        BufferedImage scaledImage = imageScaler.getResizedImage();        
+//
+//        Assert.assertTrue(scaledImage.getWidth() == wantedMaxWidth);
+//        Assert.assertTrue(scaledImage.getHeight() == wantedMaxHeight);
+//    }
 //
 //    private BufferedImage generateTestImageGreaterHeight() {
 //        return new BufferedImage(10, 20, BufferedImage.TYPE_INT_RGB);

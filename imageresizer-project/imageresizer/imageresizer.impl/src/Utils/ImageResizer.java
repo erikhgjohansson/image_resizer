@@ -47,14 +47,15 @@ public class ImageResizer {
     }
 
     public BufferedImage getResizedImage() {
-        BufferedImage result = new BufferedImage(_limits.getMaxWidth(), _limits.getMaxHeight(),
-                _imageToResize.getType());
-
-        Graphics2D g2d = result.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(_imageToResize, 0, 0, _limits.getMaxWidth(), _limits.getMaxHeight(), null);
-        g2d.dispose();
-
+        BufferedImage result = _imageToResize;
+        
+        if (isScaleImage()) {
+            result = scaleImage();
+            
+            
+            System.out.println(result);
+        }
+        
         if (isCropImage()) {
             return cropImage(result);
         }
@@ -62,33 +63,55 @@ public class ImageResizer {
         return result;
     }
 
+    private BufferedImage scaleImage() {
+        BufferedImage result = new BufferedImage(_limits.getMaxWidth(), _limits.getMaxHeight(),
+                _imageToResize.getType());
+        
+        Graphics2D g2d = result.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.drawImage(_imageToResize, 0, 0, _limits.getMaxWidth(), _limits.getMaxHeight(), null);
+        g2d.dispose();
+        return result;
+    }
+
     private BufferedImage cropImage(BufferedImage image) {
-        ImageCroppingData croppingData;
-        if (needToCropWidth()) {
-            int startX = calculateCroppingStartCoord(image.getWidth(), _limits.getMaxHeight());
-            int startY = 0;
-            croppingData = new ImageCroppingData(startX, startY, _limits.getMaxHeight(), _limits.getMaxHeight());
-        } else {
-            int startY = calculateCroppingStartCoord(image.getHeight(), _limits.getMaxWidth());
-            int startX = 0;
-            croppingData = new ImageCroppingData(startX, startY, _limits.getMaxWidth(), _limits.getMaxWidth());
-        }
+        ImageCroppingData croppingData = calculateCroppingData(image);
         BufferedImage croppedImage = image.getSubimage(croppingData.getStartX(), croppingData.getStartY(),
                 croppingData.getWidth(), croppingData.getHeight());
 
         return croppedImage;
     }
 
+    private ImageCroppingData calculateCroppingData(BufferedImage image) {
+        int startX = 0;
+        int startY = 0;
+        if (needToCropWidth(image.getWidth())) {
+            startX = calculateCroppingStartCoord(image.getWidth(), _limits.getMaxHeight());
+        } if (needToCropHeight(image.getHeight())) {
+            startY = calculateCroppingStartCoord(image.getHeight(), _limits.getMaxWidth());
+        }
+        return new ImageCroppingData(startX, startY, _limits.getMaxWidth(), _limits.getMaxHeight());
+    }
+
+
     private int calculateCroppingStartCoord(int totalSize, int wantedSize) {
         return (int) Math.round((totalSize - wantedSize) * 0.5);
     }
 
-    private boolean needToCropWidth() {
-        return _limits.getMaxHeight() < _limits.getMaxWidth();
+    private boolean needToCropHeight(int height) {
+        return height > _limits.getMaxHeight();
+    }
+    
+    private boolean needToCropWidth(int width) {
+        return width > _limits.getMaxWidth();
+    }
+
+    private boolean isScaleImage() {
+        return _resizingMethod.equals(ResizingMethod.SCALE) || _resizingMethod.equals(ResizingMethod.SCALE_AND_CROP);
     }
 
     private boolean isCropImage() {
-        return _limits.getMaxHeight() != _limits.getMaxWidth() && !_resizingMethod.equals(ResizingMethod.SCALE);
+        return _resizingMethod.equals(ResizingMethod.CROP) || _resizingMethod.equals(ResizingMethod.SCALE_AND_CROP);
     }
 
 }

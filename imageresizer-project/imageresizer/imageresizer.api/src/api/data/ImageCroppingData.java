@@ -33,7 +33,7 @@ public class ImageCroppingData {
 
     @Override
     public String toString() {
-        return "ImageCroppingData [_start=" + _startX + ", _stop=" + _startY + ", _width=" + _width + ", _height="
+        return "ImageCroppingData [_startX=" + _startX + ", _startY=" + _startY + ", _width=" + _width + ", _height="
                 + _height + "]";
     }
     
