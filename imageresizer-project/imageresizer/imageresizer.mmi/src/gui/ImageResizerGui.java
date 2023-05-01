@@ -1,66 +1,99 @@
 package gui;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ServiceLoader;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import api.data.ImageResizingLimits;
+import api.data.ResizingMethod;
 import api.services.ImageResizerService;
 
-public class ImageResizerGui extends JFrame{
+public class ImageResizerGui extends JFrame {
+    private static final int MAX_PIXELS = 512;
+    private static final int DEFAULT_MAX_PIXELS = 200;
     private static final long serialVersionUID = 1L;
     private final JPanel panel;
     private final ImageResizerService _imageResizerService;
-    private JTextField _textField;
-    
+
     public ImageResizerGui() {
         super("ImageResizer");
         _imageResizerService = loadImageResizerService();
-//        service.resizeImage(pathImageToScale);
+        // service.resizeImage(pathImageToScale);
         panel = new JPanel();
-        panel.setLayout(new FlowLayout());
-        
+        panel.setLayout(new GridLayout(5,2));
+
         JLabel label = new JLabel("Enter full path to image to be resized");
-        _textField = new JTextField();
-        _textField.setText("Absolute path");
-        _textField.setColumns(20);
-        JButton button = new JButton();  
-        button.setText("Resize image");  
+        JLabel widthLabel = new JLabel("Maximum width [pixels]");
+        JLabel heightLabel = new JLabel("Maximum height [pixels]");
+        JTextField imagePath = new JTextField();
+        imagePath.setText("Absolute path");
+        imagePath.setColumns(20);
+        JButton button = new JButton();
+        button.setText("Resize image");
+
+        JSlider width = new JSlider(0, MAX_PIXELS, DEFAULT_MAX_PIXELS);
+        width.setName("Width");
+        width.setPaintTicks(true);
+        width.setPaintLabels(true);
+        width.setMinorTickSpacing(20);  
+        width.setMajorTickSpacing(100);
+        
+        
+        JSlider height = new JSlider(0, MAX_PIXELS, DEFAULT_MAX_PIXELS);
+        height.setName("height");
+        height.setPaintTicks(true);
+        height.setPaintLabels(true);
+        height.setMinorTickSpacing(20);  
+        height.setMajorTickSpacing(100);
+        
+        JComboBox<ResizingMethod> resizingMethod = new JComboBox<>(ResizingMethod.values());
+        
         
         JLabel scalingResult = new JLabel("");
-        
+
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               String inputText = _textField.getText();
-               if(inputText != null && inputText.length() > 0){
-                   
-                   String result = _imageResizerService.resizeImage(inputText);
-                   
-                   
-                   scalingResult.setText("Resized file saved to "+result);
-               }else {
-                  label.setText("Please enter a path");
-               }
+                String inputText = imagePath.getText();
+                if (inputText != null && inputText.length() > 0) {
+
+                    ImageResizingLimits limits = new ImageResizingLimits(width.getValue(), height.getValue());
+                    ResizingMethod method = (ResizingMethod) resizingMethod.getSelectedItem();
+                    String result = _imageResizerService.resizeImage(inputText, limits, method);
+
+                    scalingResult.setText("Resized file saved to " + result);
+                } else {
+                    label.setText("Please enter a path");
+                }
             }
-         });
-        
+        });
+
         panel.add(label);
-        panel.add(_textField);
-        panel.add(button);  
-        panel.add(scalingResult);  
-        this.add(panel);  
-        this.setSize(new Dimension(700, 300));
-        this.setLocationRelativeTo(null);  
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
-        this.setVisible(true);  
+        panel.add(imagePath);
+        panel.add(resizingMethod);
+        panel.add(button);
+        panel.add(heightLabel);
+        panel.add(height);
+        panel.add(widthLabel);
+        panel.add(width);
+        panel.add(scalingResult);
+        this.add(panel);
+        this.setSize(new Dimension(500, 250));
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(true);
     }
 
     private ImageResizerService loadImageResizerService() {
@@ -68,9 +101,9 @@ public class ImageResizerGui extends JFrame{
         ImageResizerService service = services.iterator().next();
         return service;
     }
-    
+
     public void run() {
-        
+
     }
-    
+
 }

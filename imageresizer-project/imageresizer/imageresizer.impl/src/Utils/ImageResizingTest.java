@@ -3,7 +3,6 @@
 //import java.awt.image.BufferedImage;
 //
 //import org.junit.Assert;
-//import org.junit.Ignore;
 //import org.junit.Test;
 //
 //import api.data.ImageResizingLimits;
@@ -55,11 +54,10 @@
 //        Assert.assertTrue(scaledImage.getWidth() == wantedMaxWidth);
 //        Assert.assertTrue(scaledImage.getHeight() == wantedMaxHeight);
 //    }
-//    
+//
 //    @Test
 //    public void testScaleAndCropImage() {
 //
-//        System.out.println("testScaleAndCropImage");
 //        BufferedImage imageToScale = generateTestImageGreaterHeight();
 //        ResizingMethod method = ResizingMethod.SCALE_AND_CROP;
 //        int wantedMaxWidth = 5;
