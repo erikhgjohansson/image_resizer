@@ -1,5 +1,5 @@
 package api.data;
 
-public enum ScaleMethod {
+public enum ResizingMethod {
     SCALE, CROP, SCALE_AND_CROP;
 }

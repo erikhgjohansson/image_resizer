@@ -1,11 +1,11 @@
 package api.data;
 
-public class ImageScalingLimits {
+public class ImageResizingLimits {
     
     private final int _maxWidth;
     private final int _maxHeight;
 
-    public ImageScalingLimits(int maxWidth, int maxHeight) {
+    public ImageResizingLimits(int maxWidth, int maxHeight) {
         _maxWidth = maxWidth;
         _maxHeight = maxHeight;
     }
@@ -20,6 +20,6 @@ public class ImageScalingLimits {
 
     @Override
     public String toString() {
-        return "ImageScalingLimits [_maxWidth=" + _maxWidth + ", _maxHeight=" + _maxHeight + "]";
+        return "ImageResizingLimits [_maxWidth=" + _maxWidth + ", _maxHeight=" + _maxHeight + "]";
     }
 }

@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
-import Utils.ImageScaler;
-import api.data.ImageScalingLimits;
-import api.data.ScaleMethod;
+import Utils.ImageResizer;
+import api.data.ImageResizingLimits;
+import api.data.ResizingMethod;
 import api.services.ImageResizerService;
 
 public class ImageResizerServiceImpl implements ImageResizerService {
@@ -44,33 +44,35 @@ public class ImageResizerServiceImpl implements ImageResizerService {
     @Override
     public String resizeImage(String path) {
         if (invalidImageFilePath(path)) {
-            System.out.println("Error invalid file path or file format. Path = "+path);
-            return "";
+            String errorMessage = "Error invalid file path or file format. Path = "+path;
+            System.out.println(errorMessage);
+            return errorMessage;
         }
 
         Path pathImage = Paths.get(path);
         try {
-            BufferedImage unscaledImage = ImageIO.read(pathImage.toAbsolutePath().toFile());
+            BufferedImage unresizedImage = ImageIO.read(pathImage.toAbsolutePath().toFile());
             
-            ImageScaler scaler = new ImageScaler(
-                    unscaledImage, 
-                    ScaleMethod.SCALE_AND_CROP, 
-                    new ImageScalingLimits(_maxImageSize, _maxImageSize));
+            ImageResizer resizer = new ImageResizer(
+                    unresizedImage, 
+                    ResizingMethod.SCALE_AND_CROP, 
+                    new ImageResizingLimits(_maxImageSize, _maxImageSize));
             
-            BufferedImage scaledImage = scaler.getScaledImage();
-            return saveScaledImageToFile(path, pathImage, scaledImage);
+            BufferedImage resizedImage = resizer.getResizedImage();
+            return saveResizedImageToFile(path, pathImage, resizedImage);
             
         } catch (IOException e) {
-            System.out.println("Error resizing image " + pathImage.getFileName());
+            String errorMessage = "Error resizing image " + pathImage.getFileName();
+            System.out.println(errorMessage);
             e.printStackTrace();
-            return "";
+            return errorMessage;
         }
     }
 
-    private String saveScaledImageToFile(String path, Path pathImage, BufferedImage scaledImage) throws IOException {
+    private String saveResizedImageToFile(String path, Path pathImage, BufferedImage resizedImage) throws IOException {
         String format = path.substring(path.lastIndexOf(".") + 1);
         String newName = pathImage.getFileName().toString().replace("." + format, "_thumb." + format);
-        ImageIO.write(scaledImage, format, Paths.get(newName).toFile());
+        ImageIO.write(resizedImage, format, Paths.get(newName).toFile());
         return Paths.get(newName).toAbsolutePath().toString();
     }
 

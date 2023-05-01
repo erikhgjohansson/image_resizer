@@ -5,54 +5,54 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import api.data.ImageCroppingData;
-import api.data.ImageScalingLimits;
-import api.data.ScaleMethod;
+import api.data.ImageResizingLimits;
+import api.data.ResizingMethod;
 
-public class ImageScaler {
+public class ImageResizer {
 
-    private final BufferedImage _imageToScale;
-    private final ScaleMethod _scaleMethod;
-    private final ImageScalingLimits _limits;
+    private final BufferedImage _imageToResize;
+    private final ResizingMethod _resizingMethod;
+    private final ImageResizingLimits _limits;
 
-    public ImageScaler(BufferedImage imageToScale, ScaleMethod method, ImageScalingLimits limits) {
-        _imageToScale = imageToScale;
-        _scaleMethod = method;
-        _limits = calculateScalingAdjustedLimits(limits);
+    public ImageResizer(BufferedImage imageToResize, ResizingMethod method, ImageResizingLimits limits) {
+        _imageToResize = imageToResize;
+        _resizingMethod = method;
+        _limits = calculateResizingAdjustedLimits(limits);
     }
 
-    private ImageScalingLimits calculateScalingAdjustedLimits(ImageScalingLimits limits) {
-        ImageScalingLimits adjustedLimits;
-        if (_imageToScale.getHeight() < _imageToScale.getWidth()) {
-            double scale = (double) limits.getMaxHeight() / _imageToScale.getHeight();
-            int scaledWidth = (int) Math.round(_imageToScale.getWidth() * scale);
-            adjustedLimits = new ImageScalingLimits(scaledWidth, limits.getMaxHeight());
+    private ImageResizingLimits calculateResizingAdjustedLimits(ImageResizingLimits limits) {
+        ImageResizingLimits adjustedLimits;
+        if (_imageToResize.getHeight() < _imageToResize.getWidth()) {
+            double scale = (double) limits.getMaxHeight() / _imageToResize.getHeight();
+            int scaledWidth = (int) Math.round(_imageToResize.getWidth() * scale);
+            adjustedLimits = new ImageResizingLimits(scaledWidth, limits.getMaxHeight());
         } else {
-            double scale = (double) limits.getMaxWidth() / _imageToScale.getWidth();
-            int scaledHeight = (int) Math.round(_imageToScale.getHeight() * scale);
-            adjustedLimits = new ImageScalingLimits(limits.getMaxWidth(), scaledHeight);
+            double scale = (double) limits.getMaxWidth() / _imageToResize.getWidth();
+            int scaledHeight = (int) Math.round(_imageToResize.getHeight() * scale);
+            adjustedLimits = new ImageResizingLimits(limits.getMaxWidth(), scaledHeight);
         }
         return adjustedLimits;
     }
 
-    public BufferedImage getImageToScale() {
-        return _imageToScale;
+    public BufferedImage getImageToResize() {
+        return _imageToResize;
     }
 
-    public ScaleMethod getScaleMethod() {
-        return _scaleMethod;
+    public ResizingMethod getResizingMethod() {
+        return _resizingMethod;
     }
 
-    public ImageScalingLimits getLimits() {
+    public ImageResizingLimits getLimits() {
         return _limits;
     }
 
-    public BufferedImage getScaledImage() {
+    public BufferedImage getResizedImage() {
         BufferedImage result = new BufferedImage(_limits.getMaxWidth(), _limits.getMaxHeight(),
-                _imageToScale.getType());
+                _imageToResize.getType());
 
         Graphics2D g2d = result.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(_imageToScale, 0, 0, _limits.getMaxWidth(), _limits.getMaxHeight(), null);
+        g2d.drawImage(_imageToResize, 0, 0, _limits.getMaxWidth(), _limits.getMaxHeight(), null);
         g2d.dispose();
 
         if (isCropImage()) {
@@ -88,7 +88,7 @@ public class ImageScaler {
     }
 
     private boolean isCropImage() {
-        return _limits.getMaxHeight() != _limits.getMaxWidth() && !_scaleMethod.equals(ScaleMethod.SCALE);
+        return _limits.getMaxHeight() != _limits.getMaxWidth() && !_resizingMethod.equals(ResizingMethod.SCALE);
     }
 
 }
